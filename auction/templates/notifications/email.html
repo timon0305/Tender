@@ -1,0 +1,9 @@
+Dear {% if notice.recipient.company_name %}{{ notice.recipient.company_name}}{% else %}friend{% endif %},
+
+    {{ notice.actor.company_name }} {{ notice.verb }}{% if notice.target %} of <a {% if notice.target.get_absolute_url %}href="{{ domain }}{{ notice.target.get_absolute_url }}#actor_{{ notice.actor }}"{% endif %}>{{ notice.target }}</a>{% endif %}
+
+Please goto <a href="{{ domain }}">{{ domain }}</a> and signup for a free account if you want to participate in this tender.
+Please make sure to signup using this email account only.
+
+If you want to unsubscribe from this type of notification,
+log site in and uncheck unpreferable type.

@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load thumbnail %}
+
+{% block title %}{% trans 'My profile' %}{% endblock %}
+
+{% block menu_top %}
+    {% with Active='profile' %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container ">
+            <div class="kr-center kr-wrapper">
+                <h3>{% if user.pk == object.pk %}
+                    {% trans 'My profile' %}
+                {% else %}
+                    {% trans 'Profile of' %} {{ object.company_name }}
+                {% endif %}
+                </h3>
+
+                <form class="form-horizontal">
+                    {% if object.role == 1 %}
+                        <div class="control-group">
+                            <span class="control-label">Name:</span>
+
+                            <div class="controls">
+                                <span class="value">{{ object.company_name|striptags }}</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="control-group">
+                            <span class="control-label">Company Name:</span>
+
+                            <div class="controls">
+                                <span class="value">{{ object.company_name|striptags }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if user.pk == object.pk %}
+                        <div class="control-group">
+                            <span class="control-label">E-mail:</span>
+
+                            <div class="controls">
+                                <span class="value">{{ object.email }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="control-group">
+                        <span class="control-label">Type:</span>
+
+                        <div class="controls">
+                            <span class="value">{% if object.role == 1 %}
+                                Individual{% else %}Company{% endif %}</span>
+                        </div>
+                    </div>
+                    {% if object.role == 1 %}
+                        {% if object.user_provider.logo %}
+                        <div class="control-group">
+                            <span class="control-label">{% trans 'Image/Logo' %}</span>
+
+                            <div class="controls">
+                        <span class="value">
+                            {% thumbnail object.user_provider.logo "130x130" crop="center" as im %}
+                                <img class="img-responsive img-circle"
+                                     src="{{ im.url }}" alt="">
+                            {% endthumbnail %}
+                        </span>
+                            </div>
+                        </div>
+                            {% endif %}
+                        {% if object.user_provider.expertise %}
+                            <div class="control-group">
+                                <span class="control-label">Expertise:</span>
+
+                                <div class="controls">
+                                    {% for ex in object.user_provider.expertise.all %}
+                                        <span class="value">{{ ex.title|striptags }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider.year.title %}
+                            <div class="control-group">
+                                <span class="control-label">Years of Experience:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider.year.title|striptags }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider.facebook %}
+                            <div class="control-group">
+                                <span class="control-label">Facebook:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider.facebook }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider.twitter %}
+                            <div class="control-group">
+                                <span class="control-label">Twitter:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider.twitter }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider.google %}
+                            <div class="control-group">
+                                <span class="control-label">Google+:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider.google }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider.linkedin %}
+                            <div class="control-group">
+                                <span class="control-label">LinkedIn:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider.linkedin }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider.description %}
+                            <div class="control-group">
+                                <span class="control-label">Cover letter:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider.description|striptags }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        {% if object.user_provider_company.logo %}
+                            <div class="control-group">
+                                <span class="control-label">{% trans 'Image/Logo' %}</span>
+
+                                <div class="controls">
+                        <span class="value">
+                            {% thumbnail object.user_provider_company.logo "130x130" crop="center" as im %}
+                                <img class="img-responsive img-circle"
+                                     src="{{ im.url }}" alt="">
+                            {% endthumbnail %}
+                        </span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="control-group">
+                            <span class="control-label">Business Type:</span>
+
+                            <div class="controls">
+                                <span class="value">{{ object.user_provider_company.business_type.title|striptags }}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <span class="control-label">Turnover:</span>
+
+                            <div class="controls">
+                                <span class="value">{{ object.user_provider_company.turnover.title|striptags }}</span>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <span class="control-label" for="employees">Number of Employees:</span>
+
+                            <div class="controls">
+                                <span class="value">{{ object.user_provider_company.number_of_emloyees.title|striptags }}</span>
+                            </div>
+                        </div>
+                        {% if object.user_provider_company.expertise %}
+                            <div class="control-group">
+                                <span class="control-label">Expertise:</span>
+
+                                <div class="controls">
+                                    {% for ex in object.user_provider_company.expertise.all %}
+                                        <span class="value">{{ ex.title|striptags }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider_company.year.title %}
+                            <div class="control-group">
+                                <span class="control-label">Years of Experience:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider_company.year.title|striptags }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider_company.facebook %}
+                            <div class="control-group">
+                                <span class="control-label">Facebook:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider_company.facebook }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider_company.twitter %}
+                            <div class="control-group">
+                                <span class="control-label">Twitter:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider_company.twitter }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider_company.google %}
+                            <div class="control-group">
+                                <span class="control-label">Google+:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider_company.google }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider_company.linkedin %}
+                            <div class="control-group">
+                                <span class="control-label">LinkedIn:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider_company.linkedin }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.user_provider_company.description %}
+                            <div class="control-group">
+                                <span class="control-label">Cover letter:</span>
+
+                                <div class="controls">
+                                    <span class="value">{{ object.user_provider_company.description|striptags }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    <div class="control-group">
+                        <div class="controls">
+                            {% if user.pk == object.pk %}
+                                <a href="
+                                        {% if object.role == 1 %}{% url 'change_profile' object.user_provider.pk %}{% else %}{% url 'change_company_profile' object.user_provider_company.pk %}{% endif %}"
+                                   class="btn-u" type="submit">Change
+                                    profile</a>
+                            {% else %}
+                                <a href="{% url 'messages_compose_to' object %}"
+                                   class="btn-u">{% trans 'Send a message' %}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+        <!--/row-fluid-->
+    </div><!--/container-->
+{% endblock %}
+
+{% block extra-js %}
+    <script type="text/javascript">
+        $(function () {
+            $('input[name=providerType]').on('click', function () {
+                if ($(this).val() == 1) {
+                    $('.companyForm').hide();
+                    $('.indForm').show();
+                } else {
+                    $('.companyForm').show();
+                    $('.indForm').hide();
+                }
+            })
+        });
+    </script>
+{% endblock %}

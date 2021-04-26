@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans 'Regisration' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container ">
+            <div class="kr-center kr-wrapper">
+                <h3>{% trans 'Employer Registration' %}</h3>
+                {% include 'accounts/form_employer_registration.html' %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

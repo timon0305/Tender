@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load endless %}
+{% load i18n %}
+
+{% block title %}{% trans 'Notifications' %}{% endblock %}
+
+{% block content %}
+    <div class="container ">
+        <div class="row-fluid kr-wrapper">
+            <h3 class="notification-title">{% trans 'Notifications' %}</h3>
+        <a class="cogs" data-placement="bottom" title="E-mail settings" href="{% url 'mail_settings' %}"><i class="icon-cogs"></i></a>
+        <div class="clear"></div>
+            {% paginate 10 object_list %}
+            <ul class="notification-list">
+                {% for notice in object_list %}
+                    <a {% if notice.target.get_absolute_url %}
+                        href="{{ notice.target.get_absolute_url }}#actor_{{ notice.actor }}"
+                    {% endif %}
+                            class="notification-item {{ notice.unread|yesno:"unread,read" }} hover-effect">
+                        <span class="title">
+                            {{ notice.actor.company_name }}
+                            {{ notice.verb }}
+                            {% if notice.target %}
+                                of {{ notice.target }}
+                            {% endif %}
+                        </span>
+                        <span>{{ notice.timesince }} ago</span>
+                        <span>{{ notice.description }}</span>
+                    </a>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="row-fluid pagination pagination-centered">
+            <span class="block">{% show_pages %}</span>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra-js %}
+    <script type="application/javascript">
+        var mark_notif_url = '{% url 'mark_notifications' %}';
+        {% include 'chunks/csrf_js.html' %}
+        $.post(mark_notif_url);
+        $('.cogs').tooltip();
+    </script>
+{% endblock %}

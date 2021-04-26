@@ -1,0 +1,37 @@
+{% load i18n %}
+<form class="form-horizontal"
+      action="{% url "registration" %}?type={{ request.GET.type }}"
+      method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+    {% for el in user_form %}
+        {% include 'form_object.html' with obj=el only %}
+    {% endfor %}
+
+    <div class="control-group kr-center-container">
+        <label class="radio kr-center"
+               style="margin-right:20px;">
+            <input type="radio" value="1" name="providerType"
+                   autocomplete="off" {% if request.GET.type == '1' %}checked{% endif %}>
+            {% trans 'Individual' %}
+        </label>
+        <label class="radio kr-center">
+            <input type="radio" value="2" name="providerType"
+                   autocomplete="off" {% if request.GET.type == '2' %}checked{% endif %}>
+            {% trans 'Company' %}
+        </label>
+    </div>
+
+    {% for el in secondary_form %}
+        {% include 'form_object.html' with obj=el only %}
+    {% endfor %}
+
+
+    <div class="control-group">
+        <div class="controls">
+            <button class="btn-u"
+                    type="submit">{% trans 'Register' %}</button>
+        </div>
+    </div>
+
+</form>

@@ -1,0 +1,12 @@
+{% extends 'tenders/modal_frame.html' %}
+{% load i18n %}
+
+{% block modal_title %} {% trans 'Withdraw bid' %}{% endblock %}
+
+{% block modal_body %}{% trans 'Are you sure you want to delete your bid?' %}{% endblock %}
+{% block modal_footer %}
+    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Close' %} </button>
+    <a href="{% url 'bid-withdraw' context.bid_id %}"
+       class="btn btn-u confirm-withdraw-bid" data-bid_id="{{ context.bid_id }}">{% trans 'Confirm' %}
+    </a>
+{% endblock %}

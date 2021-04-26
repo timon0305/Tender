@@ -1,0 +1,43 @@
+{% extends 'tenders/modal_frame.html' %}
+{% load i18n %}
+{% block modal_title %} {% trans 'Edit bid' %}{% endblock %}
+
+{% block modal_body %}
+    <div class="row-fluid kr-center ">
+        <form class="form-horizontal" method="post" id="form_edit_bid"
+              enctype="multipart/form-data">
+            {% include 'tenders/bids_form_edit.html' %}
+        </form>
+    </div>
+    <div id="kr_attach_list" class="form-horizontal">
+    <div class="control-group" style="margin-bottom: 0;">
+        <span class="control-label">Attacments:</span>
+
+        {% with attach_list as attachs %}
+            <div class="controls empty_list"
+                 style="display:{{ attachs|yesno:"none,block" }};">
+                <span class="value">None</span>
+            </div>
+            {% for attach in attachs %}
+                <div class="controls attach_controls">
+                    <span>{{ attach }}</span>
+                    <a href="{% url 'attachment-delete' attach.pk %}" class="delete_attach"
+                       data-id="{{ attach.pk }}">×</a>
+                </div>
+
+            {% endfor %}
+            <div class="clear-attach" style="display:{{ attachs|yesno:"block,none" }};"></div>
+            <div class="controls progress-wrap"></div>
+        {% endwith %}
+
+    </div>
+</div>
+<div id="kr_attach" class="form-horizontal"></div>
+{% endblock %}
+{% block modal_footer %}
+    <button type="button" class="btn btn-default"
+            data-dismiss="modal">{% trans 'Close' %} </button>
+    <a href="{% url 'bid-edit' bid_id %}"
+       class="btn btn-u confirm-edit-bid" data-bid_id="{{ bid_id }}">{% trans 'Confirm' %}
+    </a>
+{% endblock %}

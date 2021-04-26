@@ -1,0 +1,11 @@
+<div class="control-group {% if obj.errors %}error{% endif %}">
+    <label class="control-label"
+           for="{{ obj.id_for_label }}">{{ obj.label }}</label>
+
+    <div class="controls">
+        {{ obj }}
+        {% if obj.errors %}
+            <div class="help-block">{{ obj.errors.0 }}</div>
+        {% endif %}
+    </div>
+</div>

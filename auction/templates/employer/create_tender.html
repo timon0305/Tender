@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block extra-css %}
+    <link rel="stylesheet"
+          href="{% static 'css/bootstrap-datetimepicker.css' %}"/>
+{% endblock %}
+
+{% block title %}{% trans 'Create a new tender' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container ">
+            <div class="kr-center kr-wrapper">
+                <h3>{% trans 'Create a new tender' %}</h3>
+                {% include 'employer/includes/tender_form.html' %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra-js %}
+    {% include 'employer/includes/tender_cu_extra_js.html' %}
+    {% with tender_id='' %}
+        {% include 'employer/includes/tender_attach_js.html' %}
+    {% endwith %}
+{% endblock %}

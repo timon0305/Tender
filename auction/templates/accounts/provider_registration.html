@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}Regisration{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container ">
+            <div class="kr-center kr-wrapper">
+                <h3>Service Provider Registration</h3>
+                <div id="reg_form">
+                {% include 'accounts/form_provider_registration.html' %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block js-add %}
+    <script type="text/javascript">
+        $(function () {
+            var reg_url_path = '{% url 'registration' %}';
+            var curr_reg_type = {{ request.GET.type }};
+
+            var build_url = function (path, reg_type) {
+                return path + '?type=' + reg_type
+            };
+
+            $('input[name=providerType]').on('click', function refresh () {
+                var reg_type = $(this).val();
+                if (reg_type != curr_reg_type) {
+                    var url = build_url(reg_url_path, reg_type)
+                    $.get(url, function (data) {
+                        $('#reg_form').html(data['html']);
+                        curr_reg_type = reg_type;
+                        $('input[name=providerType]').on('click', refresh);
+                    });
+                }
+            })
+        });
+    </script>
+{% endblock %}

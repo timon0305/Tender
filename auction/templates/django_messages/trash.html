@@ -1,0 +1,47 @@
+{% extends "django_messages/base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block title %}{% trans 'Deleted Messages' %}{% endblock %}
+
+{% block message_content %}
+    <div class="headline">
+        <h3>{% trans "Deleted Messages" %}</h3>
+    </div>
+    <div class="alert alert-info">
+        {% trans "Deleted Messages are removed from the trash at unregular intervals, don't rely on this feature for long-time storage." %}
+    </div>
+    {% if message_list %}
+        <table class="table table-hover message-table">
+            <thead>
+            <tr>
+                <th>{% trans "Sender" %}</th>
+                <th>{% trans "Subject" %}</th>
+                <th>{% trans "Received" %}</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for message in message_list %}
+                <tr>
+                    <td>{{ message.sender }}</td>
+                    <td>
+                        {{ message.subject }}
+                    <td>{{ message.sent_at|date:"d/m/Y P" }}</td>
+                    <td><a href="{% url 'messages_undelete' message.id %}" class="message_undelete" data-placement="bottom" title="undelete"><i class="icon-reply"></i></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{% trans "No messages" %}</p>
+    {% endif %}
+
+{% endblock %}
+{% block js-add %}
+    <script>
+        $(function() {
+            $('.message_undelete').tooltip();
+        });
+    </script>
+{% endblock %}

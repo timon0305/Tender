@@ -1,0 +1,21 @@
+{% extends "django_messages/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Compose Message" %}{% endblock %}
+
+{% block message_content %}
+    <div class="headline">
+        <h3>{% trans "Compose Message" %}</h3>
+    </div>
+    <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {% for el in form %}
+        {% include 'form_object.html' with obj=el only %}
+    {% endfor %}
+    <div class="control-group">
+        <div class="controls">
+            <input class='btn-u' type="submit" value="{% trans "Send" %}"/>
+        </div>
+    </div>
+    </form>
+{% endblock %}

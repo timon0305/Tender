@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Withdraw bid' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container ">
+            <div class="kr-center kr-wrapper">
+                <h3>{% trans "Withdraw bid" %}</h3>
+            <hr />
+            <form action="" method="post">{% csrf_token %}
+                <div class="alert">
+
+                {% trans 'Are you sure you want to delete your bid' %}?
+                    </div>
+                <div class="text-center">
+                    <input class="btn-u" type="submit" value="Confirm"/>
+                </div>
+            </form>
+                </div>
+        </div>
+    </div>
+{% endblock %}

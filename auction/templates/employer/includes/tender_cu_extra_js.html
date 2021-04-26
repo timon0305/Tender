@@ -1,0 +1,36 @@
+{% load staticfiles %}
+
+<script type="text/javascript"
+        src="{% static 'js/moment-with-locales.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'js/bootstrap-datetimepicker.js' %}"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#id_deadline_1').parent().addClass('kr-date');
+        $('#id_deadline_1').datetimepicker({
+            useCurrent: true,
+            format: 'hh:mm a',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'auto'
+            },
+            icons: {
+                up: "glyphicon glyphicon-arrow-up",
+                down: "glyphicon glyphicon-arrow-down"
+            }
+        }).attr('placeholder','Time');
+        $('#id_deadline_0').datetimepicker({
+            useCurrent: true,
+            minDate: "{% now "m/d/Y" %}",
+            format: 'DD/MM/YYYY',
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'auto'
+            },
+            icons: {
+                up: "glyphicon glyphicon-arrow-up",
+                down: "glyphicon glyphicon-arrow-down"
+            }
+        }).attr('placeholder','Date');
+    });
+</script>

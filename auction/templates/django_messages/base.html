@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block title %}{% trans 'Messages' %}{% endblock %}
+
+{% block bodyclass %}about{% endblock %}
+{% block content %}
+    <div class="container kr-wrapper">
+        <h1>{% trans 'Messages' %}</h1>
+    <div class="row-fluid">
+
+            <div class="sidebar span3">
+                <ul class="message-nav hover-effect row-fluid">
+                    <li><a href="{% url 'messages_inbox' %} ">{% trans "Inbox" %}</a></li>
+                    <li><a href="{% url 'messages_outbox' %} ">{% trans "Sent Messages" %}</a></li>
+                    <li><a href="{% url 'messages_compose' %} ">{% trans "New Message" %}</a></li>
+                    <li><a href="{% url 'messages_trash' %} ">{% trans "Trash" %}</a></li>
+                    <li><a href="{% url 'mail_settings' %} ">{% trans "Mail settings" %}</a></li>
+                </ul>
+            </div>
+        <div class="span9 message-content">
+
+            {% block message_content %}{% endblock %}
+        </div>
+    </div>
+    </div>
+{% endblock %}

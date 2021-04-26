@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans 'Sign up an account' %}{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="row-fluid kr-center-container">
+        <div class="kr-center kr-wrapper">
+            <h3>{% trans 'Sign up an account' %}</h3>
+            <a href="{% url 'registration' %}?type=0" class="btn-u pull-left" style="margin-right:20px;">I'm an Employer</a>
+            <a href="{% url 'registration' %}?type=1" class="btn-u pull-right">I'm a Service Provider</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

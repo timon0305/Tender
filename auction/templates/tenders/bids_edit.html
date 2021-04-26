@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Edit bid' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container ">
+            <div class="kr-center kr-wrapper">
+                <form class="form-horizontal" method="post">
+                    {% include 'tenders/bids_form_edit.html' %}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

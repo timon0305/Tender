@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% block breadcrumbs %}
+    <li><a href="">Employer</a> <span class="divider">/</span></li>
+    <li class="active">My Tenders</li>
+{% endblock %}
+
+{% block footer %}
+    <ul class="menu hidden-phone">
+        <li class="active">
+            <a href="{% url 'employer_tenders' %}">My Tenders</a>
+            <span class="separator">|</span>
+        </li>
+        <li>
+            <a href="{% url 'employer_profile' %}">My Profile</a>
+            <span class="separator">|</span>
+        </li>
+        <li>
+            <a href="{% url 'employer-tender-create' %}">Create New Tender</a>
+            <span class="separator">|</span>
+        </li>
+        <li>
+            <a href="{% url 'search_providers' %}">Search for Service
+                Provider</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% load invited_provider %}
+
+{% block extra-css %}
+    <link rel="stylesheet"
+          href="{% static 'css/jquery.mCustomScrollbar.css' %}"/>
+{% endblock %}
+
+{% block title %}{% trans 'Edit tender' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-wrapper">
+
+                <h3>{% trans 'Invite Service providers to this Tender' %}</h3>
+        <div class="row-fluid">
+             <div class="span6">
+                 <div class="text-center" style="margin-bottom:10px;">
+                     <h4 style="margin-bottom:0;">Enter New Email addresses</h4>
+                     (unregistered members would be sent an invite)
+                 </div>
+                 <div id="email_list">
+                    {% get_email_list tender.pk %}
+                 </div>
+                 <div class="text-center"><h4>Enter email address</h4></div>
+                    <form class="kr-form" method="post"
+                          id="invite-form" action="">
+                        <div style="display: inline-block;">
+                            <div class="input-prepend">
+                                {{ form.provider_email }}
+                                <span class="add-on invite-submit">Invite</span>
+                            </div>
+                            <div class="help-block">{{ form.provider_email.errors.0 }}</div>
+                        </div>
+                    </form>
+                <div class="kr-wrapper" style="margin-bottom:20px;">
+                    <div class="text-center"><h4>Service providers already Invited to this tender</h4></div>
+                    <div id="provider_list">
+                        {% get_provider_list tender.pk %}
+                    </div>
+                </div>
+
+            </div>
+            <div class="span6">
+                <div class="kr-wrapper" style="margin-bottom:20px;">
+                    <div class="text-center"><h4>Frequently Invited Service Providers by you</h4></div>
+                    <div id="invited_providers">
+                        {% get_invited_providers tender %}
+                    </div>
+                </div>
+                <div class="kr-wrapper" style="margin-bottom:20px;">
+                    <form class="kr-form" method="post"
+                          id="invite-search-form" action="">
+                        <h4>Search for service provider</h4>
+                        <div class="input-prepend" style="margin-bottom: 11px;">
+                            <input type="text" id="invite-search-input"
+                                   placeholder="Enter email or name" value=""
+                                   autocomplete="off"/>
+                            <span class="add-on invite-search-submit">Search
+                        </span>
+                        </div>
+                    </form>
+                    <div id="invited_search"></div>
+                </div>
+            </div>
+        </div>
+        <a class="btn-u" href="{% url 'employer-tender-detail' tender.pk %}" style="display:block; margin:0 auto 15px; width:28px;">Next</a>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra-js %}
+    <script type="text/javascript"
+        src="{% static 'js/jquery.mCustomScrollbar.concat.min.js'%}"></script>
+    {% include 'employer/includes/tender_cu_extra_js.html' %}
+    <script>
+        {% include 'chunks/csrf_js.html' %}
+        $('body').on('click', '.invite-submit', function(){
+            tender = {{ tender.pk }};
+            email = $('#id_provider_email').val();
+            invite_add(tender, email)
+        });
+
+        $('.invite-search-submit').on('click', function(){
+            $.post("{% url 'invite_search' %}", {
+                'tender':{{ tender.pk }},
+                'search': $('#invite-search-input').val()
+            }, function(data){
+                $('#invited_search .mCSB_container').html(data.invited_search).mCustomScrollbar("update");
+            },'json')
+        });
+
+        $(window).load(function () {
+            $("#email_list").mCustomScrollbar({
+                autoHideScrollbar: true,
+                theme: "rounded-dark"
+            });
+            $("#provider_list").mCustomScrollbar({
+                autoHideScrollbar: true,
+                theme: "rounded-dark"
+            });
+            $("#invited_providers").mCustomScrollbar({
+                autoHideScrollbar: true,
+                theme: "rounded-dark"
+            });
+            $("#invited_search").mCustomScrollbar({
+                autoHideScrollbar: true,
+                theme: "rounded-dark"
+            });
+        });
+
+        function invite_add(tender, email){
+            $.ajax({
+                url: '{% url 'invite_add' %}',
+                data: {
+                    'tender': tender,
+                    'provider_email': email,
+                    'search': $('#invite-search-input').val()
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data){
+                    if (data.valid){
+                        blocks_render(data)
+                    } else {
+                        $('#invite-form').html(data.html)
+                    }
+                }
+            });
+        };
+        function invite_delete(url){
+            $.post(url, {
+                'search': $('#invite-search-input').val()
+            }, function(data){
+                blocks_render(data);
+            },'json')
+        }
+
+        function blocks_render(data){
+            $('#id_provider_email').val('');
+            par = $('#id_provider_email').parents('.input-prepend');
+            par.next('.help-block').html('');
+            $('#email_list .mCSB_container').html(data.email_list).mCustomScrollbar("update");
+            $('#provider_list .mCSB_container').html(data.provider_list).mCustomScrollbar("update");
+            $('#invited_providers .mCSB_container').html(data.invited_providers).mCustomScrollbar("update");
+            $('#invited_search .mCSB_container').html(data.invited_search).mCustomScrollbar("update");
+        }
+
+    </script>
+{% endblock %}

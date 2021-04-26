@@ -1,0 +1,52 @@
+{% extends "django_messages/base.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block title %}{% trans 'Inbox' %}{% endblock %}
+
+{% block message_content %}
+    <div class="headline">
+        <h3>{% trans "Inbox" %}</h3>
+    </div>
+    <div class="form-horizontal">
+        <div class="control-group">
+            <span class="control-label">{% trans "Subject" %}</span>
+            <div class="controls">
+                <span class="value">{{ message.subject }}</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <span class="control-label">{% trans "Sender" %}</span>
+            <div class="controls">
+                <span class="value">{{ message.sender }}</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <span class="control-label">{% trans "Date" %}</span>
+            <div class="controls">
+                <span class="value">{{ message.sent_at|date:"m/d/Y H:i" }}</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <span class="control-label">{% trans "Recipient" %}</span>
+            <div class="controls">
+                <span class="value">{{ message.recipient }}</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <span class="control-label">{% trans "Message" %}</span>
+            <div class="controls">
+                <span class="value">{{ message.body|linebreaksbr }}</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+
+                {% ifequal message.recipient.pk user.pk %}
+                    <a class="btn-u" href="{% url 'messages_reply' message.id %}">{% trans "Reply" %}</a>
+                {% endifequal %}
+                    <a class="btn-u" href="{% url 'messages_delete' message.id %}">{% trans "Delete" %}</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% load i18n %}
+
+{% if user.is_authenticated %}
+    <div class="navbar">
+        <div class="navbar-inner">
+            <a class="btn btn-navbar" data-toggle="collapse"
+               data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a><!-- /nav-collapse -->
+            <div class="nav-collapse collapse">
+                <ul class="nav top-2">
+                    {% if user.is_employer %}
+                        <li{% if active_tab == 'my_tenders' %} class="active"{% endif %}>
+                            <a href="{% url 'employer_tenders' %}">{% trans 'My Tenders' %}</a>
+                        </li>
+                        <li{% if active_tab == 'my_profile' %} class="active"{% endif %}>
+                            <a href="{% url 'employer_profile' user.pk %}">{% trans 'My Profile' %}</a>
+                        </li>
+                        <li{% if active_tab == 'create_new_tender' %} class="active"{% endif %}>
+                            <a href="{% url 'employer-tender-create' %}">{% trans 'Create New Tender' %}</a>
+                        </li>
+                        <li{% if active_tab == 'search_for_service_provider' %} class="active"{% endif %}>
+                            <a href="{% url 'search_providers' %}">{% trans 'Search for Service Provider' %}</a>
+                        </li>
+                        {% elif user.is_provider %}
+                        <li{% if active_tab == 'my_bids' %} class="active"{% endif %}>
+                            <a href="{% url 'provider_bids' %}">{% trans 'My Bids' %}</a>
+                        </li>
+                        <li{% if active_tab == 'my_profile' %} class="active"{% endif %}>
+                            <a href="{% url 'provider_profile' user.pk %}">{% trans 'My profile' %}</a>
+                        </li>
+                        <li{% if active_tab == 'search_for_tenders' %} class="active"{% endif %}>
+                            <a href="{% url 'search_tender' %}">{% trans 'Search for Tenders' %}</a>
+                        </li>
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}

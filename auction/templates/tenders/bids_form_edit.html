@@ -1,0 +1,8 @@
+{% load i18n %}
+{% for hidden in form.hidden_fields %}
+    {{ hidden }}
+{% endfor %}
+
+{% for el in form.visible_fields %}
+    {% include 'form_object.html' with obj=el only %}
+{% endfor %}

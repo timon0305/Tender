@@ -1,0 +1,78 @@
+{% load staticfiles %}
+
+<script type="text/javascript" src="{% static 'js/jquery.form.min.js' %}"></script>
+<script type="text/javascript">
+    $(function () {
+        {% include 'chunks/csrf_js.html' %}
+        $('body').on('click', '.btn-attach', function () {
+            $('#id_file').trigger('click');
+        });
+
+        $('body').on('click', '.tender_submit', function () {
+            $('#tender_form').submit();
+        });
+
+        $.get("{% url 'tender_attachment_add' %}", {}, function (data) {
+            $('#kr_attach').html(data);
+            {% if attach_list and attach_list|length >= 5  %}
+                $('.btn-attach').hide();
+            {% endif %}
+        });
+
+        $('body').on('change', '#id_file', function () {
+            $('#form_attach').ajaxSubmit({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                    $('.empty_list').hide();
+                    $('.progress-wrap').html('<div class="progress"><div class="bar"></div><div class="percent text-center">0%</div></div>');
+                    var percentVal = '0%';
+                    $('.bar').width(percentVal);
+                    $('.percent').html(percentVal);
+                },
+                data: {
+                    tender_ident: $('#id_tender_ident').val(),
+                    tender: '{{ tender_id }}'
+                },
+                uploadProgress: function(event, position, total, percentComplete) {
+                    var percentVal = percentComplete + '%';
+                    $('.bar').width(percentVal);
+                    $('.percent').html(percentVal);
+                },
+                dataType:  'json',
+                complete: function(data) {
+                    setTimeout(function(){
+                        $('.progress').remove();
+                        data = JSON.parse(data.responseText);
+                        $('.clear-attach').show().before('<div class="controls attach_controls" ><span >' + data['file'] + '</span><a href="#file' + data['pk'] + '" class="delete_attach" data-id="' + data['pk'] + '">×</a></div>');
+                        $('#id_file').val('');
+                        if (data['quan'] >= 5) {
+                            $('.btn-attach').hide()
+                        }
+                        if (data['quan'] != 0) {
+                            $('.empty_list').hide();
+                        }
+                    } ,1000);
+                }
+            });
+        });
+
+        var url = '/employer/tender/attach/delete/';
+        $('body').on('click', '.delete_attach', function (e) {
+            var obj_id = $(this).data('id');
+            var block = $(this).parent();
+            $.post(url + obj_id + '/', function (data) {
+                block.remove();
+                if (data == 0) {
+                    $('.empty_list').show();
+                    $('.clear-attach').hide();
+                }
+                if (data <= 5) {
+                    $('.btn-attach').show()
+                }
+            });
+        });
+
+    });
+</script>

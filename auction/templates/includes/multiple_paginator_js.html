@@ -1,0 +1,7 @@
+{% load staticfiles %}
+<script type="text/javascript">
+    $.cookie('page_click', 'act');
+    $('a[rel=experied_page]').on('click',function(){
+        $.cookie('page_click', 'exp');
+    });
+</script>

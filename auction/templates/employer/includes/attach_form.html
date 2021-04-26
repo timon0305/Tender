@@ -1,0 +1,11 @@
+<form class="form-horizontal" method="post"
+      enctype="multipart/form-data" id="form_attach" action="{% url 'tender_attachment_add' %}">
+<div style="visibility: hidden;position:absolute;">
+    {{ form.file }}
+</div>
+<div class="control-group">
+    <div class="controls">
+        <span class="btn-u btn-attach" >Add more...</span>
+    </div>
+</div>
+</form>

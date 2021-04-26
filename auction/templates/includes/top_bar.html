@@ -1,0 +1,51 @@
+{% load notifications_tags %}
+{% load i18n %}
+
+{% notifications_unread as unread_count %}
+
+<div class="top">
+    <div class="container">
+        <ul class="loginbar pull-right">
+            {% if user.is_authenticated %}
+                <li>
+                    <a id="settings" data-target="#" href="#"
+
+                       data-toggle="dropdown" aria-haspopup="true"
+                       role="button"
+                       aria-expanded="false">{% trans 'Settings' %}
+                        </a>
+
+                    <ul class="dropdown-menu" role="menu"
+                        aria-labelledby="settings">
+                        <li>
+                            <a href="{% url 'auth_password_change' %}">
+                                {% trans 'Change password' %}
+                            </a>
+                            <a href="{% url 'notification_settings' %}">
+                                {% trans 'Notification settings' %}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="devider">&nbsp;</li>
+                <li><a href="{% url 'notifications' %}">{% trans 'Notifications' %}
+                    {% if unread_count %}
+                        <span class="badge">{{ unread_count }}</span>{% endif %}
+                </a>
+                </li>
+                <li class="devider">&nbsp;</li>
+                <li><a href="{% url 'messages_inbox' %}">{% trans 'Mail' %}
+                    {% if messages_inbox_count %}<span class="badge">{{ messages_inbox_count }}</span>{% endif %}
+                </a></li>
+                <li class="devider">&nbsp;</li>
+                <li><a href="{% url 'auth_logout' %}">{% trans 'Log out' %}</a></li>
+            {% else %}
+                <li><a href="{% url 'auth_login' %}">{% trans 'Log in' %}</a></li>
+                <li class="devider">&nbsp;</li>
+                <li><a href="{% url 'registration_type' %}">{% trans 'Sign up' %}</a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </div>
+</div>

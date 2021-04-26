@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load endless %}
+{% load i18n %}
+
+{% block title %}{% trans 'Search for Service Providers' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-wrapper">
+            <h3>{% trans 'Search for Service Providers' %}</h3>
+
+            <div class="span6">
+                <h4>{% trans 'Filters' %}</h4>
+
+                <form class="form-horizontal">
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Type' %}</span>
+
+                        <div class="controls check_list">
+                            {{ form.type }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Expertise' %}</span>
+
+                        <div class="controls check_list">
+                            {{ form.expertise }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Experience' %}</span>
+
+                        <div class="controls check_list">
+                            {{ form.experience }}
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit"
+                                    class="btn-u">{% trans 'Search' %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="span5">
+                <h4>{% trans 'Search Results' %}</h4>
+                {% if object_list %}
+                    <ul class="unstyled row-fluid provider_list">
+                        {% paginate 10 object_list %}
+                        {% for user in object_list %}
+                            <li>
+                                <div>
+                                    <a href="{% url 'provider_profile' user.pk %}">{{ user.company_name }}</a>
+                                    <a href="{% url 'messages_compose_to' user %}">
+                                        <i class="icon-envelope"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="row-fluid pagination pagination-centered">
+                    <span class="block">
+                        {% show_pages %}
+                    </span>
+                    </div>
+                {% else %}
+                    We didn't find any providers that match your search.
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% load i18n %}
+{% load getbids %}
+
+{% csrf_token %}
+{% for hidden in form.hidden_fields %}
+    {{ hidden }}
+{% endfor %}
+<form class="form-horizontal" method="post" id="post-form"
+      enctype="multipart/form-data">
+    <input type="hidden" id="tender_ident" name="tender_ident"
+           {% if tender_ident %}value="{{ tender_ident }}"{% else %}
+           value="{% get_tender_ident %}"{% endif %}>
+
+    {% for el in form.visible_fields %}
+        {% include 'form_object.html' with obj=el only %}
+    {% endfor %}
+</form>
+
+<div id="kr_attach_list" class="form-horizontal">
+    <div class="control-group" style="margin-bottom: 0;">
+        <span class="control-label">Attacments:</span>
+
+        {% with attach_list as attachs %}
+            <div class="controls empty_list"
+                 style="display:{{ attachs|yesno:"none,block" }};">
+                <span class="value">None</span>
+            </div>
+            {% for attach in attachs %}
+                <div class="controls attach_controls">
+                    <span>{{ attach }}</span>
+                    <a href="{% url 'attachment-delete' attach.pk %}" class="delete_attach"
+                       data-id="{{ attach.pk }}">×</a>
+                </div>
+            {% endfor %}
+            <div class="clear-attach" style="display:{{ attachs|yesno:"block,none" }};"></div>
+            <div class="controls progress-wrap"></div>
+        {% endwith %}
+
+    </div>
+</div>
+<div id="kr_attach" class="form-horizontal"></div>
+<div class="form-horizontal">
+    <div class="control-group">
+        <div class="controls">
+            <span class="btn-u bid_submit" >{% trans 'Bid' %}</span>
+        </div>
+    </div>
+</div>

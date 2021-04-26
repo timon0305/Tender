@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Login" %}{% endblock %}
+
+{% block page_title %}{% trans 'Login' %}{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="active">{% trans 'Login' %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid">
+            {% if not user.is_authenticated %}
+                <form class="log-page enter_action" action="." method="post">
+                {% csrf_token %}
+                <h3>{% trans 'Login' %}</h3>
+                <div class="input-prepend control-group {% if form.email.errors or form.non_field_errors %}error{% endif %}">
+                    <span class="add-on"><i class="icon-user"></i></span>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="help-block">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="input-prepend control-group {% if form.password.errors or form.non_field_errors%}error{% endif %}">
+                    <span class="add-on"><i class="icon-lock"></i></span>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="help-block">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                {{ form.non_field_errors }}
+                <div class="controls form-inline">
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                    <button class="btn-u pull-right" type="submit">Login
+                    </button>
+                    <a href="{% url 'registration_type' %}" class="btn-u pull-right"
+                       style="margin-right:10px;">Register</a>
+                </div>
+                <div class="clear"></div>
+
+                <hr/>
+                <h4>Forget your Password ?</h4>
+                <p>no worries, <a class="color-green"
+                                  href="{% url 'auth_password_reset' %}">click
+                    here</a> to reset your password.</p>
+                </form>
+            {% else %}
+                <br>
+                <h3 class="text-center">{% trans "You were authrorized" %}<br/>
+                    {% trans "and will be redirected to main page in " %}<span
+                            id="timer">10</span> {% trans "seconds" %}</h3>
+                <script>
+                    (function () {
+                        var countdown = 10
+                        setInterval(function () {
+                            if (countdown == 0) window.location = "/";
+                            else $("#timer").text("" + (countdown--))
+                        }, 1000);
+                    })();
+                </script>
+            {% endif %}
+        </div>
+        <!--/row-fluid-->
+    </div><!--/container-->
+{% endblock %}

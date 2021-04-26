@@ -1,0 +1,21 @@
+{% load i18n %}
+<form class="form-horizontal"
+      action="{% url "registration" %}?type={{ request.GET.type }}"
+      method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% for el in user_form %}
+        {% include 'form_object.html' with obj=el only %}
+    {% endfor %}
+
+    {% for el in secondary_form %}
+        {% include 'form_object.html' with obj=el only %}
+    {% endfor %}
+
+    <div class="control-group">
+        <div class="controls">
+            <button class="btn-u"
+                    type="submit">{% trans 'Register' %}</button>
+        </div>
+    </div>
+</form>

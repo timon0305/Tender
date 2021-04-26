@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans 'Change profile' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container ">
+            <div class="kr-center kr-wrapper">
+                <h3>{% trans 'Change profile' %}</h3>
+                <form class="form-horizontal"
+                      method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% for el in form %}
+                        {% include 'form_object.html' with obj=el only %}
+                    {% endfor %}
+
+                    <div class="control-group">
+                        <div class="controls">
+                            <button class="btn-u" type="submit">{% trans 'Change' %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra-js %}
+    {% if user.is_provider %}
+    <script type="text/javascript">
+        $(function () {
+            $('input[name=providerType]').on('click', function () {
+                if ($(this).val() == 1) {
+                    $('.companyForm').hide();
+                    $('.indForm').show();
+                } else {
+                    $('.companyForm').show();
+                    $('.indForm').hide();
+                }
+            })
+        });
+    </script>
+    {% endif %}
+{% endblock %}

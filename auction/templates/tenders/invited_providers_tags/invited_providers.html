@@ -1,0 +1,10 @@
+<div class="control-group">
+<table>
+    {% for item in items %}
+        <tr class="controls">
+        <td width="300">{{ item.company_name }} ({{ item.email }})</td><td width="100"><a class="btn-u" onclick="invite_add({{ tender }}, '{{ item.email }}');" >Invite</a></td></tr>
+        {% empty %}
+        <tr><td>No results found</td></tr>
+    {% endfor %}
+</table>
+</div>

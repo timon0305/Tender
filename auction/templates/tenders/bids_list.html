@@ -1,0 +1,35 @@
+{% load i18n %}
+{% for bid in bids %}
+    <div class="pricing hover-effect" id="actor_{{ bid.user }}">
+        <div class="pricing-head">
+            <a href="{% url 'provider_profile' bid.user.pk %}" class="bid-title">
+                {{ bid.user.company_name }}
+            </a>
+            <div class="bid-price">
+                <i>$</i>
+                {{ bid.price }}
+            </div>
+        </div>
+    <div class="kr-center-container">
+    {% with attachments=bid.bidsattachments.all %}
+        {% if attachments %}
+            <div class="attach_toggle"><i class="icon-file"></i> Attachments</div>
+            <div class="attach_source" style="display:none;">
+            {% for file in bid.bidsattachments.all %}
+                <div>
+                    <a href="{{ file.file.url }}" target="_blank">{{ file }}</a>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    </div>
+        {% if user == bid.user and not tender.is_withdraw and not tender.is_expired %}
+            <div class="pricing-footer">
+                <a class="btn-u btn_modal_edit_bid" href="{% url 'bid-edit' bid.pk %}" data-bid_id="{{ bid.pk }}">{% trans 'Edit' %}</a>
+                <a class="btn-u btn_modal" href="#" data-bid_id="{{ bid.pk }}" data-data='{"bid_id": {{ bid.pk }} }' data-template="tenders/modal_withdraw_bid.html">{% trans 'Withdraw' %} </a>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+

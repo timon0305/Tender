@@ -1,0 +1,43 @@
+{% load getbids %}
+
+<form id="tender_form" class="form-horizontal" method="post"
+      enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for el in form.visible_fields %}
+            {% include 'form_object.html' with obj=el only %}
+    {% endfor %}
+    <input type="hidden" id="id_edit_tender_id" name="edit_tender_id"
+           value="{{ object.id }}">
+    {{ form.tender_ident }}
+    <input type="hidden" id="tender" name="tender" value="">
+</form>
+<div id="kr_attach_list" class="form-horizontal">
+    <div class="control-group" style="margin-bottom: 0;">
+
+        <span class="control-label">Attacments:</span>
+        {% with attach_list as attachs %}
+            <div class="controls empty_list"
+                 style="display:{{ attachs|yesno:"none,block" }}; margin-bottom: 0;height: 22px; font-size:12px;">
+                <span class="value" style="height:22px;">None</span>
+            </div>
+            {% for attach in attachs %}
+                <div class="controls attach_controls">
+                    <span>{{ attach }}</span>
+                    <a href="#file{{ attach.pk }}" class="delete_attach"
+                       data-id="{{ attach.pk }}">×</a>
+                </div>
+
+            {% endfor %}
+        <div class="clear-attach" style="display:{{ attachs|yesno:"block,none" }};"></div>
+        <div class="controls progress-wrap"></div>
+        {% endwith %}
+    </div>
+</div>
+<div id="kr_attach" class="form-horizontal"></div>
+<div class="form-horizontal">
+    <div class="control-group">
+        <div class="controls">
+            <span class="btn-u tender_submit">Submit</span>
+        </div>
+    </div>
+</div>

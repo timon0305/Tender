@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Change notification settings' %}{% endblock %}
+
+{% block content %}
+    <div class="container ">
+        <div class="row-fluid kr-center-container">
+            <div class="kr-center kr-wrapper">
+                <form method="post" class="form-horizontal">
+                    {% csrf_token %}
+                    <h3>
+                        {% block title_h3 %}{% trans 'Select type of notification' %} <br /> {% trans 'you would like to receive' %}{% endblock %}
+                    </h3>
+                    {% for el in form %}
+                        {% include 'form_object.html' with obj=el only %}
+                    {% endfor %}
+                    <div class="kr-center-container">
+
+                            <button class="btn-u"
+                                    type="submit">{% trans 'Change' %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

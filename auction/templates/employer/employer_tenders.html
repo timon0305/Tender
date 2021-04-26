@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load endless %}
+{% load i18n %}
+
+{% block title %}{% trans 'Currently Active Tenders' %}{% endblock %}
+
+{% block content %}
+    <div class="container tender-list">
+        <div class="row-fluid kr-wrapper">
+            <div class="tabbable">
+                <ul class="nav nav-tabs">
+                    <li {% if active_tenders_tab == 'active' %} class="active" {% endif %}><a href="#tab1" data-toggle="tab">Active
+                        Tenders</a></li>
+                    <li {% if active_tenders_tab == 'experied' %} class="active" {% endif %}><a href="#tab2" data-toggle="tab">Expired Tenders</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane {% if active_tenders_tab == 'active' %}active{% endif %}" id="tab1">
+                        <h3>{% trans 'Currently Active Tenders' %}</h3>
+                        {% paginate 10 obj %}
+                        <ul class="unstyled row-fluid">
+                            {% for entry in obj %}
+                                <li>
+                                    <a href="{% url 'employer-tender-detail' entry.pk %}"
+                                       class="tender-item hover-effect active">
+                                        <span class="title">{{ entry.title }}</span>
+                                        <span><strong>Type of Tender:</strong>
+                                            {{ entry.get_type_display }}
+                                        </span>
+                                        <span><strong>Public Type:</strong>
+                                            {{ entry.get_type_public_display }}
+                                        </span>
+                                        <span><strong>Deadline:</strong>
+                                            {{ entry.deadline|date:"d/m/Y" }}
+                                            {{ entry.deadline|time:"P" }}
+                                        </span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="row-fluid pagination pagination-centered">
+                            <span class="block">{% show_pages %}</span>
+                        </div>
+                    </div>
+                    <div class="tab-pane {% if active_tenders_tab == 'experied' %}active{% endif %}" id="tab2">
+                        <h3>{% trans 'Experied Tenders' %}</h3>
+                        {% paginate 10 experied using "experied_page" %}
+                        <ul class="unstyled row-fluid">
+                            {% for entry in experied %}
+                                <li>
+                                    <a href="{% url 'employer-tender-detail' entry.pk %}"
+                                       class="tender-item hover-effect active">
+                                        <span class="title">{{ entry.title }}</span>
+                                        <span><strong>Type of Tender:</strong>
+                                            {{ entry.get_type_display }}
+                                        </span>
+                                        <span><strong>Public Type:</strong>
+                                            {{ entry.get_type_public_display }}
+                                        </span>
+                                        <span><strong>Deadline:</strong>
+                                            {{ entry.deadline|date:"d/m/Y" }}
+                                            {{ entry.deadline|time:"P" }}
+                                        </span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="row-fluid pagination pagination-centered">
+                            <span class="block">{% show_pages %}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra-js %}
+    {% include 'includes/multiple_paginator_js.html' %}
+{% endblock %}

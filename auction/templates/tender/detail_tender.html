@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load getbids %}
+
+{% block title %}{{ obj.title }}{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container">
+            <div class="kr-center kr-wrapper">
+                <h3>Bid For Tender</h3>
+                <div class="form-horizontal" >
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Title' %}</span>
+
+                        <div class="controls">
+                            <span class="value">{{ obj.title }}</span>
+                        </div>
+                    </div>
+
+                {% if obj.user.pk != user.pk %}
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Employer' %}</span>
+
+                        <div class="controls">
+                            <a class="value" href="{% url 'employer_profile' obj.user.pk %}">{{ obj.user.company_name }}</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Industry' %}</span>
+
+                        <div class="controls">
+                            <span class="value">{{ obj.industry }}</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Deadline' %}</span>
+
+                        <div class="controls">
+                            <span class="value">
+                                {{ obj.deadline|date:"d/m/Y" }}
+                                {{ obj.deadline|time:"P" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Type of Tender' %}</span>
+
+                        <div class="controls">
+                            <span class="value">{{ obj.get_type_display }}</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Project Description' %}</span>
+
+                        <div class="controls">
+                            <span class="value">{{ obj.description }}</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Attachments' %}</span>
+
+                        <div class="controls">
+                            <ul class="unstyled ">
+                                {% for file in obj.tendersattachments.all %}
+                                    <li class="value">
+                                        <a target="_blank"
+                                           href="{{ file.file.url }}"
+                                           download>{{ file }}</a>
+                                    </li>
+                                    {% empty %}
+                                    <li class="value">None</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% if user == obj.user %}
+                        {% if obj.is_expired %}
+                            <div class="kr-center-container">
+                                <a class="btn-u"
+                                   href="{% url 'employer-tender-create' %}?reinvite={{ obj.id }}">
+                                    {% trans 'Re-invite tender' %}
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="kr-center-container">
+                                <a class="btn-u"
+                                   href="{% url 'employer-tender-edit' obj.id %}">
+                                    {% trans 'Edit' %}
+                                </a>
+                                {% if obj.is_withdraw == False %}
+                                    <a class="btn-u btn_modal" href="#" id="withdraw-link"
+                                       data-data="{}"
+                                       data-template="tenders/modal_withdraw_tender.html">
+                                        {% trans 'Withdraw Tender' %}
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="kr-center-container" style="margin-top:7px;">
+                                <a class="btn-u" style="padding:4px;"
+                                   href="{% url 'invite_provider' obj.id %}">
+                                    {% trans 'Invite more Service Providers' %}
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    <div id="make_bid"></div>
+                    <div class="bids-list">
+                        {% bids_list obj %}
+                        <div class="clear-empty"></div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--/row-fluid-->
+    </div><!--/container-->
+    <div class="modal fade"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="myModalLabel"
+     aria-hidden="true">
+        <div class="modal-dialog"></div>
+    </div>
+{% endblock %}
+
+
+{% block extra-js %}
+    <script type="text/javascript" src="{% static 'js/jquery.form.min.js' %}"></script>
+    <script type="application/javascript">
+        $(function () {
+            $('body').on('click', '.attach_toggle', function () {
+                $(this).next('.attach_source').toggle('slow');
+            });
+            var make_bid_url = '{% url 'make-bid' %}?tender_id={{ obj.id }}';
+            show_bid_form();
+
+            {% if not obj.is_withdraw and not obj.is_expired %}
+                var withdraw_url = '{% url 'withdraw-tender' obj.pk %}';
+                {% include 'chunks/csrf_js.html' %}
+
+                $('body').on('click', '.confirm-withdraw-tender', function () {
+                    $.post(withdraw_url, function () {
+                        window.location = "http://" + window.location.host + "{% url 'employer_tenders' %}";
+                    });
+                });
+
+                $('body').on('click', '.btn_modal', function (e) {
+                    e.preventDefault();
+                    $.post({% url 'modal_content' %},
+                        {
+                            data: JSON.stringify($(this).data("data")),
+                            template: $(this).data("template")
+                        },
+                        function (data) {
+                            $('.modal .modal-dialog').html(data);
+                            $('.modal').modal('show');
+                        }
+                    )
+                });
+
+                $('body').on('click', '.confirm-withdraw-bid', function (e) {
+                    e.preventDefault();
+                    kr_but = $(this);
+                    $.post(kr_but.attr('href'), {}, function (data) {
+                        show_bid_form();
+                        $('.bids-list').find('a.btn_modal[data-bid_id=' + kr_but.data('bid_id') + ']').parents('.pricing').remove();
+                        $('.modal').modal('hide');
+                    });
+                });
+
+                $('body').on('click', '.btn_modal_edit_bid', function (e) {
+                    e.preventDefault();
+                    kr_but = $(this);
+                    $.get(kr_but.attr("href"), {}, function (data) {
+                        data = JSON.parse(data);
+                        $('.modal .modal-dialog').html(data['html']);
+                        $('.modal').modal('show');
+                        show_attach_form();
+                    })
+                });
+
+                $('body').on('click', '.confirm-edit-bid', function (e) {
+                    e.preventDefault();
+                    kr_but = $(this);
+                    $.ajax({
+                        url: kr_but.attr('href'),
+                        type: 'POST',
+                        data: new FormData($('#form_edit_bid')[0]),
+                        async: false,
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data['formshow'] == 'yes') {
+                                $('.modal .modal-dialog').html(data['html']);
+                                show_attach_form();
+                            } else {
+                                $('.bids-list').find('a.btn_modal_edit_bid[data-bid_id=' + kr_but.data('bid_id') + ']').parents('.pricing').replaceWith(data['html']);
+                                $('.modal').modal('hide');
+                            }
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                });
+
+                $('body').on('click', '.delete_attach', function (e) {
+                    e.preventDefault();
+                    kr_but = $(this);
+                    but_parent = kr_but.parent('div');
+                    $.post(kr_but.attr('href'), {}, function (data) {
+                        but_parent.remove();
+                        if (data == 0) {
+                            $('.empty_list').show()
+                            $('.clear-attach').hide();
+                        }
+                        if (data <= 5) {
+                            $('.btn-attach').show()
+                        }
+                    });
+                });
+
+                {% if user.role != user.Roles.EMPLOYER %}
+
+
+                    $('body').on('click','.bid_submit',function (e) {
+                        e.preventDefault();
+                        $.ajax({
+                            url: make_bid_url,
+                            type: 'POST',
+                            data: new FormData($('#post-form')[0]),
+                            async: false,
+                            success: function (data) {
+                                data = JSON.parse(data);
+                                if (data['formshow']=='no'){
+                                $('#make_bid').html('<div class="alert alert-info" style="margin-bottom:0;">You have already bid</div>');
+                                $('.bids-list').prepend(data['html']);
+                                } else{
+                                    $('#make_bid').html(data.html);
+                                    show_attach_form();
+                                }
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false
+                        });
+                    });
+
+                    $('body').on('click', '.btn-attach', function () {
+                        $('#id_file').trigger('click');
+                    });
+
+                    $('body').on('click', '.tender_submit', function () {
+                        $('#tender_form').submit();
+                    });
+
+                    $('body').on('change', '#id_file', function () {
+                        $('#form_attach').ajaxSubmit({
+                            beforeSend: function(xhr, settings) {
+                                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                                }
+                                $('.empty_list').hide();
+                                $('.progress-wrap').html('<div class="progress"><div class="bar"></div><div class="percent text-center">0%</div></div>');
+                                var percentVal = '0%';
+                                $('.bar').width(percentVal);
+                                $('.percent').html(percentVal);
+                            },
+                            data: {
+                                tender_ident: $('#tender_ident').val(),
+                                tender_id: '{{ obj.id }}'
+                            },
+                            uploadProgress: function(event, position, total, percentComplete) {
+                                var percentVal = percentComplete + '%';
+                                $('.bar').width(percentVal);
+                                $('.percent').html(percentVal);
+                            },
+                            dataType:  'json',
+                            complete: function(data) {
+                                setTimeout(function(){
+                                    $('.progress').remove();
+                                    data = JSON.parse(data.responseText);
+                                    $('.clear-attach').show().before('<div class="controls attach_controls" ><span >' + data['file'] + '</span><a href="/provider/bid/'+ data['pk'] +'/attachment_delete/" class="delete_attach" data-id="' + data['pk'] + '">×</a></div>');
+                                    $('#id_file').val('');
+                                    if (data['quan'] >= 5) {
+                                        $('.btn-attach').hide()
+                                    }
+                                    if (data['quan'] != 0) {
+                                        $('.empty_list').hide();
+                                    }
+                                } ,1000);
+                            }
+                        });
+                    });
+                {% endif %}
+            {% endif %}
+
+            function show_bid_form() {
+                $.get(make_bid_url, function (data) {
+                    $('#make_bid').html(data);
+                    show_attach_form();
+                });
+            }
+
+            function show_attach_form(){
+                $.get("{% url 'bid_attachment_add' %}", {}, function (data) {
+                    $('#kr_attach').html(data);
+                    {% if attach_list and attach_list|length >= 5  %}
+                        $('.btn-attach').hide();
+                    {% endif %}
+                });
+            }
+
+        });
+    </script>
+{% endblock %}
+

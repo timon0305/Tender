@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load thumbnail %}
+
+{% block title %}{% trans 'My profile' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-center-container ">
+            <div class="kr-center kr-wrapper">
+
+                <h3>{% if user.pk == object.pk %}
+                    {% trans 'My profile' %}
+                    {% else %}{% trans 'Profile of' %} {{ object.company_name }}
+                {% endif %}
+                    </h3>
+
+                <form class="form-horizontal">
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Company name' %}</span>
+                        <div class="controls">
+                            <span class="value">{{ object.company_name }}</span>
+                        </div>
+                    </div>
+
+                    {% if user.pk == object.pk %}
+                        <div class="control-group">
+                            <span class="control-label">{% trans 'E-mail' %}</span>
+
+                            <div class="controls">
+                                <span class="value">{{ object.email }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Business Type' %}</span>
+                        <div class="controls">
+                            <span class="value">{{ object.user_employer.business_type }}</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Turnover' %}</span>
+                        <div class="controls">
+                            <span class="value">{{ object.user_employer.turnover }}</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Number of Employees' %}</span>
+                        <div class="controls">
+                            <span class="value">{{ object.user_employer.number_of_emloyees }}</span>
+                        </div>
+                    </div>
+
+                    {% if object.user_employer.logo %}
+
+                        <div class="control-group">
+                            <span class="control-label">{% trans 'Image/Logo' %}</span>
+                            <div class="controls">
+                        <span class="value">
+                            {% thumbnail object.user_employer.logo "130x130" crop="center" as im %}
+                                <img class="img-responsive img-circle"
+                                     src="{{ im.url }}" alt="">
+                            {% endthumbnail %}
+                        </span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="control-group">
+                        <span class="control-label">{% trans 'Description of Company' %}</span>
+                        <div class="controls">
+                            <span class="value">{{ object.user_employer.description }}</span>
+                        </div>
+                    </div>
+                    {% if object.user_employer.facebook %}
+                        <div class="control-group">
+                            <span class="control-label">{% trans 'Facebook' %}</span>
+                            <div class="controls">
+                                <span class="value">{{ object.user_employer.facebook }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if object.user_employer.twiter %}
+                        <div class="control-group">
+                            <span class="control-label">{% trans 'Twitter' %}</span>
+                            <div class="controls">
+                                <span class="value">{{ object.user_employer.twiter }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if object.user_employer.google %}
+                        <div class="control-group">
+                            <span class="control-label">{% trans 'Google+' %}</span>
+                            <div class="controls">
+                                <span class="value">{{ object.user_employer.google }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if object.user_employer.linkedin %}
+                        <div class="control-group">
+                            <span class="control-label">{% trans 'Linkedln' %}</span>
+                            <div class="controls">
+                                <span class="value">{{ object.user_employer.linkedin }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="control-group">
+                        <div class="controls">
+                            {% if user.pk == object.pk %}
+                                <a href="{% url 'employer_change_profile' %}"
+                                   class="btn-u">{% trans 'Change profile' %}</a>
+                            {% else %}
+                                <a href="{% url 'messages_compose_to' object %}"
+                                   class="btn-u">{% trans 'Send a message' %}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

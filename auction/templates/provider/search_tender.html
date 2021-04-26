@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load endless %}
+{% load i18n %}
+
+{% block menu_top %}
+    {% with Active='search_tender' %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}
+
+{% block extra-css %}
+    <link rel="stylesheet"
+          href="{% static 'css/bootstrap-datetimepicker.css' %}"/>
+{% endblock %}
+
+{% block title %}{% trans 'Search for tenders' %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row-fluid kr-wrapper">
+            <h3>{% trans 'Search for tenders' %}</h3>
+
+            <div class="span7">
+                <h4>Filters</h4>
+
+                <form class="form-horizontal" method="get" action=".">
+                    <div class="control-group">
+                        <label class="control-label" for="inputIndustry">
+                            {% trans 'Industry' %}
+                        </label>
+
+                        <div class="controls">
+                            {{ form.industry }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputDeadline">Deadline</label>
+
+                        <div class='input-group date kr-date controls'
+                             id='datetimepicker'>
+                            <div class="input-append">
+                                {{ form.deadline }}
+                        <span class="input-group-addon add-on"><i
+                                class="icon-calendar"></i>
+                        </span>
+                            </div>
+                            {{ form.deadline.errors }}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="control-label">Type of Tender</span>
+
+                        <div class="controls">
+                            <label class="checkbox">
+                                {{ form.is_open }}
+                                {% trans 'Open View' %}
+                            </label>
+                            <label class="checkbox">
+                                {{ form.is_employer }}
+                                {% trans 'Employer View' %}
+                            </label>
+                            <label class="checkbox">
+                                {{ form.is_close }}
+                                {% trans 'Closed View' %}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn-u">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="span4 tender-list" style="font-size: 0.86rem;">
+                <h4>Search Results</h4>
+                <ul class="unstyled row-fluid">
+                    {% paginate 5 tender_list %}
+                    {% for tender in tender_list %}
+                        <li>
+                            <div class="tender-item hover-effect
+                                {% for u in tender.tender_bids.all %}
+                                    {% if u.user == request.user %}
+                                        bided
+                                    {% endif %}
+                                {% endfor %}">
+                                <a href="{% url 'employer-tender-detail' tender.id %}" class="title">{{ tender.title }}</a>
+
+                                <span class="tender-content">
+                                    <span><strong>Type of Tender:</strong>
+                                        {{ tender.get_type_display }}
+                                    </span>
+                                    <span><strong>Public Type:</strong>
+                                        {{ tender.get_type_public_display }}
+                                    </span>
+                                    <span><strong>Posted:</strong>
+                                        {{ tender.created|date:"d/m/Y" }}
+                                        {{ tender.created|time:"P" }}
+
+                                    </span>
+                                    <span><strong>Deadline:</strong>
+                                        {{ tender.deadline|date:"d/m/Y" }}
+                                        {{ tender.deadline|time:"P" }}
+                                    </span>
+
+                                    <span><strong>Proposals:</strong> {{ tender.count_bids }}</span>
+                                    <span><strong>Employer:</strong> <a href="{% url 'employer_profile' tender.user.pk %}">{{ tender.user.company_name}}</a></span>
+                                 </span>
+                            </div>
+                        </li>
+                        {% empty %}
+                        We didn't find any tenders that match your search.
+                    {% endfor %}
+                </ul>
+                <div class="row-fluid pagination pagination-centered">
+                    <span class="block">
+                        {% show_pages %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!--/row-fluid-->
+    </div><!--/container-->
+{% endblock %}
+
+{% block extra-js %}
+    <script type="text/javascript"
+            src="{% static 'js/moment-with-locales.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'js/bootstrap-datetimepicker.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker').datetimepicker({
+                format: 'DD/MM/YYYY',
+                widgetPositioning: {
+                    horizontal: 'left',
+                    vertical: 'auto'
+                },
+                icons: {
+                    up: "glyphicon glyphicon-arrow-up",
+                    down: "glyphicon glyphicon-arrow-down"
+                }
+            });
+        });
+    </script>
+{% endblock %}
